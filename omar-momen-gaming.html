@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OMAR_MOMEN // DEV_INTERFACE v2.8</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@200;300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:       #030508;
+      --bg2:      #060c12;
+      --cyan:     #00f5ff;
+      --cyan-dim: rgba(0,245,255,0.15);
+      --cyan-glow:rgba(0,245,255,0.06);
+      --green:    #00ff88;
+      --green-dim:rgba(0,255,136,0.12);
+      --red:      #ff3c5a;
+      --white:    #d0eef5;
+      --muted:    rgba(208,238,245,0.4);
+      --border:   rgba(0,245,255,0.18);
+      --border2:  rgba(0,245,255,0.06);
+      --panel:    rgba(0,15,25,0.85);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Share Tech Mono', monospace;
+      background: var(--bg);
+      color: var(--white);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ═══ CURSOR ═══ */
+    #cur {
+      position: fixed;
+      width: 4px; height: 20px;
+      background: var(--cyan);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%,-50%);
+      box-shadow: 0 0 8px var(--cyan), 0 0 20px var(--cyan-dim);
+      transition: height .15s;
+    }
+    #cur-cross-h {
+      position: fixed;
+      width: 20px; height: 1px;
+      background: var(--cyan);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%,-50%);
+      box-shadow: 0 0 6px var(--cyan);
+    }
+
+    /* ═══ SCANLINES ═══ */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.06) 2px,
+        rgba(0,0,0,0.06) 4px
+      );
+      pointer-events: none;
+      z-index: 8000;
+    }
+
+    /* ═══ GRID BG ═══ */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--border2) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border2) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ═══ CORNER DECORATION ═══ */
+    .corner {
+      position: fixed;
+      width: 24px; height: 24px;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .corner-tl { top: 16px; left: 16px; border-top: 1px solid var(--cyan); border-left: 1px solid var(--cyan); }
+    .corner-tr { top: 16px; right: 16px; border-top: 1px solid var(--cyan); border-right: 1px solid var(--cyan); }
+    .corner-bl { bottom: 16px; left: 16px; border-bottom: 1px solid var(--cyan); border-left: 1px solid var(--cyan); }
+    .corner-br { bottom: 16px; right: 16px; border-bottom: 1px solid var(--cyan); border-right: 1px solid var(--cyan); }
+
+    /* ═══ NAV ═══ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2.5rem;
+      background: rgba(3,5,8,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-id {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      text-shadow: 0 0 12px var(--cyan);
+    }
+    .nav-status {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+      animation: blink 2.5s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; } 50% { opacity: 0.2; }
+    }
+    .status-text {
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    .nav-loc {
+      font-size: 0.5rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+
+    /* ═══ HERO ═══ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 8rem 2.5rem 4rem;
+      overflow: hidden;
+    }
+
+    /* Radial glow behind hero */
+    .hero-glow {
+      position: absolute;
+      top: 40%; left: 30%;
+      transform: translate(-50%,-50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(ellipse, rgba(0,245,255,0.05) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Portrait right side */
+    .hero-portrait {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 42%;
+      display: flex;
+      align-items: flex-end;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .hero-portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      filter: grayscale(100%) contrast(1.2) brightness(0.85);
+      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.5) 0%, transparent 100%),
+                          linear-gradient(to top, transparent 0%, black 18%);
+      mask-image: linear-gradient(to left, rgba(0,0,0,0.5) 0%, transparent 100%);
+      mix-blend-mode: screen;
+      opacity: 0;
+      animation: imgIn 1s ease 0.8s forwards;
+    }
+    /* cyan tint overlay on portrait */
+    .hero-portrait::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,245,255,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    @keyframes imgIn {
+      to { opacity: 0.75; }
+    }
+
+    /* HUD frame around portrait */
+    .hud-frame {
+      position: absolute;
+      right: 0; top: 80px; bottom: 0;
+      width: 42%;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .hud-frame::before {
+      content: '';
+      position: absolute;
+      top: 20px; right: 20px;
+      width: 40px; height: 40px;
+      border-top: 1px solid var(--cyan);
+      border-right: 1px solid var(--cyan);
+      box-shadow: 4px -4px 12px var(--cyan-dim);
+    }
+    .hud-frame::after {
+      content: '';
+      position: absolute;
+      bottom: 20px; left: 20px;
+      width: 40px; height: 40px;
+      border-bottom: 1px solid var(--cyan);
+      border-left: 1px solid var(--cyan);
+      box-shadow: -4px 4px 12px var(--cyan-dim);
+    }
+
+    /* scan line on portrait */
+    .portrait-scan {
+      position: absolute;
+      right: 0; top: 80px;
+      width: 42%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      z-index: 4;
+      opacity: 0.6;
+      animation: scanMove 4s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes scanMove {
+      0%   { top: 80px; }
+      100% { top: 100vh; }
+    }
+
+    /* Hero left content */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 55%;
+    }
+
+    .hero-sys {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--cyan);
+      margin-bottom: 0.8rem;
+      animation: fadeU 0.7s ease both;
+    }
+    .hero-sys::before { content: '> '; }
+
+    .glitch-name {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      position: relative;
+      text-shadow: 0 0 30px rgba(0,245,255,0.2);
+      animation: fadeU 0.8s ease 0.15s both;
+    }
+    .glitch-name .accent { color: var(--cyan); text-shadow: 0 0 20px var(--cyan), 0 0 60px rgba(0,245,255,0.4); }
+
+    /* Glitch effect */
+    .glitch-name::before,
+    .glitch-name::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    .glitch-name::before {
+      color: var(--red);
+      animation: glitch1 5s infinite;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    }
+    .glitch-name::after {
+      color: var(--cyan);
+      animation: glitch2 5s infinite;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    }
+    @keyframes glitch1 {
+      0%,94%,100% { transform: none; opacity: 0; }
+      95% { transform: translate(-3px,1px); opacity: 0.7; }
+      97% { transform: translate(3px,-1px); opacity: 0.7; }
+    }
+    @keyframes glitch2 {
+      0%,94%,100% { transform: none; opacity: 0; }
+      96% { transform: translate(3px,2px); opacity: 0.6; }
+      98% { transform: translate(-2px,-2px); opacity: 0.6; }
+    }
+
+    .hero-role {
+      font-family: 'Exo 2', sans-serif;
+      font-size: clamp(0.8rem, 1.5vw, 1rem);
+      font-weight: 200;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 1.2rem 0 2.5rem;
+      animation: fadeU 0.8s ease 0.3s both;
+    }
+    .hero-role span {
+      color: var(--green);
+      text-shadow: 0 0 8px var(--green);
+    }
+
+    /* Terminal block */
+    .terminal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 1.2rem 1.5rem;
+      max-width: 480px;
+      position: relative;
+      animation: fadeU 0.9s ease 0.5s both;
+    }
+    .terminal::before {
+      content: '● ● ●';
+      position: absolute;
+      top: 0.6rem; left: 1rem;
+      font-size: 0.5rem;
+      color: var(--border);
+      letter-spacing: 0.3em;
+    }
+    .terminal-line {
+      font-size: 0.72rem;
+      line-height: 1.9;
+      color: var(--muted);
+      margin-top: 0.8rem;
+    }
+    .terminal-line .cmd { color: var(--cyan); }
+    .terminal-line .val { color: var(--green); }
+    .terminal-line .str { color: #ffb347; }
+    .cursor-blink {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--cyan);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 2rem;
+      animation: fadeU 0.9s ease 0.65s both;
+    }
+    .badge {
+      border: 1px solid var(--border);
+      background: var(--cyan-glow);
+      padding: 0.35rem 0.9rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      transition: all 0.25s;
+      cursor: default;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+    .badge:hover {
+      background: var(--cyan-dim);
+      box-shadow: 0 0 12px var(--cyan-dim);
+    }
+
+    /* ═══ SECTIONS ═══ */
+    .section-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2.5rem;
+    }
+
+    .sec-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .sec-tag {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--cyan);
+      text-shadow: 0 0 8px var(--cyan);
+    }
+    .sec-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+    .sec-num {
+      font-size: 0.5rem;
+      color: rgba(0,245,255,0.25);
+      letter-spacing: 0.15em;
+    }
+
+    /* ═══ STATS ═══ */
+    .stats-section { padding: 5rem 0; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .stat-card {
+      background: var(--bg2);
+      padding: 2.2rem 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    .stat-card:hover { background: rgba(0,245,255,0.03); }
+    .stat-card:hover::before { transform: scaleX(1); }
+    .stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--cyan);
+      text-shadow: 0 0 20px rgba(0,245,255,0.4);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.5rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* ═══ SKILLS ═══ */
+    .skills-section { padding: 4rem 0 5rem; }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .skill-card {
+      background: var(--bg2);
+      padding: 2rem 1.8rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .skill-card:hover { background: rgba(0,245,255,0.03); }
+    .skill-card-id {
+      font-size: 0.48rem;
+      letter-spacing: 0.3em;
+      color: rgba(0,245,255,0.3);
+      margin-bottom: 0.8rem;
+    }
+    .skill-card-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 8px rgba(0,245,255,0.3);
+    }
+    .skill-card-desc {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.8rem;
+      line-height: 1.75;
+      color: var(--muted);
+      font-weight: 300;
+    }
+    /* bar */
+    .skill-bar {
+      margin-top: 1.2rem;
+      height: 2px;
+      background: var(--border2);
+      position: relative;
+      overflow: hidden;
+    }
+    .skill-bar-fill {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      box-shadow: 0 0 8px var(--cyan);
+      width: 0;
+      transition: width 1.2s ease;
+    }
+    .skill-card.vis .skill-bar-fill { width: var(--pct); }
+
+    /* ═══ SERVICES ═══ */
+    .services-section { padding: 4rem 0 5rem; }
+    .services-list { list-style: none; }
+    .service-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid var(--border2);
+      border-bottom: none;
+      transition: all 0.3s;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-row:last-child { border-bottom: 1px solid var(--border2); }
+    .service-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--cyan);
+      transform: scaleY(0);
+      transition: transform 0.3s;
+      box-shadow: 0 0 8px var(--cyan);
+    }
+    .service-row:hover { background: var(--cyan-glow); padding-left: 2rem; }
+    .service-row:hover::before { transform: scaleY(1); }
+    .service-name {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+    }
+    .service-price {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      color: var(--green);
+      text-shadow: 0 0 8px var(--green);
+      letter-spacing: 0.1em;
+    }
+
+    /* ═══ CONNECT ═══ */
+    .connect-section { padding: 4rem 0 6rem; }
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+      gap: 1px;
+      background: var(--border);
+    }
+    .social-card {
+      background: var(--bg2);
+      padding: 1.6rem 1.4rem;
+      text-decoration: none;
+      display: block;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .social-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      transform: scaleX(0);
+      transition: transform 0.35s ease;
+    }
+    .social-card:hover { background: rgba(0,245,255,0.04); }
+    .social-card:hover::after { transform: scaleX(1); }
+    .sc-id {
+      font-size: 0.45rem;
+      letter-spacing: 0.3em;
+      color: rgba(0,245,255,0.35);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    .sc-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--white);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+      transition: color 0.3s;
+    }
+    .social-card:hover .sc-name { color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
+    .sc-handle {
+      font-size: 0.65rem;
+      color: var(--muted);
+      font-family: 'Share Tech Mono', monospace;
+    }
+    .sc-arrow {
+      position: absolute;
+      top: 1.2rem; right: 1.2rem;
+      font-size: 0.7rem;
+      color: rgba(0,245,255,0.25);
+      transition: all 0.3s;
+    }
+    .social-card:hover .sc-arrow {
+      color: var(--cyan);
+      transform: translate(3px,-3px);
+      text-shadow: 0 0 6px var(--cyan);
+    }
+
+    /* ═══ FOOTER ═══ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: rgba(3,5,8,0.6);
+    }
+    .footer-id {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-shadow: 0 0 10px var(--cyan);
+      letter-spacing: 0.2em;
+    }
+    .footer-copy {
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      color: rgba(208,238,245,0.2);
+      text-transform: uppercase;
+    }
+    .footer-ping {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.5rem; color: var(--green); letter-spacing: 0.15em;
+    }
+    .footer-ping .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: blink 2s infinite;
+    }
+
+    /* ═══ ANIMATIONS ═══ */
+    @keyframes fadeU {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.vis { opacity: 1; transform: none; }
+
+    /* ═══ PROJECTS MARQUEE ═══ */
+    .projects-section { padding: 4rem 0 5rem; overflow: hidden; }
+
+    .marquee-track-wrap {
+      position: relative;
+      overflow: hidden;
+      /* fade edges */
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 1.4rem;
+      width: max-content;
+      animation: marqueeScroll 40s linear infinite;
+      padding: 0.5rem 0;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+
+    @keyframes marqueeScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Project card — sharp rectangle, one corner clipped */
+    .proj-card {
+      flex-shrink: 0;
+      width: 300px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      position: relative;
+      text-decoration: none;
+      display: block;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+
+      /* bottom-right corner clipped */
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+    }
+    .proj-card:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(0,245,255,0.12), inset 0 0 30px rgba(0,245,255,0.03);
+    }
+
+    /* Clip corner visual marker */
+    .proj-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 0 0 18px 18px;
+      border-color: transparent transparent var(--bg) transparent;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* Cyan corner accent line */
+    .proj-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      transition: width 0.4s ease;
+      z-index: 10;
+    }
+    .proj-card:hover::before { width: 100%; }
+
+    .proj-thumb {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+      filter: grayscale(40%) brightness(0.75);
+      transition: filter 0.4s ease, transform 0.4s ease;
+    }
+    .proj-card:hover .proj-thumb {
+      filter: grayscale(0%) brightness(0.9);
+      transform: scale(1.04);
+    }
+
+    /* Thumb overflow hidden so scale doesn't bleed */
+    .proj-thumb-wrap {
+      overflow: hidden;
+      height: 170px;
+      position: relative;
+    }
+
+    /* Scan line on thumb hover */
+    .proj-thumb-wrap::after {
+      content: '';
+      position: absolute;
+      top: -100%; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+      animation: none;
+    }
+    .proj-card:hover .proj-thumb-wrap::after {
+      opacity: 0.7;
+      animation: thumbScan 1.2s linear infinite;
+    }
+    @keyframes thumbScan {
+      0%   { top: -2px; }
+      100% { top: 100%; }
+    }
+
+    .proj-info {
+      padding: 1rem 1.2rem 1.4rem;
+    }
+    .proj-id {
+      font-size: 0.44rem;
+      letter-spacing: 0.3em;
+      color: rgba(0,245,255,0.3);
+      margin-bottom: 0.4rem;
+    }
+    .proj-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+    .proj-card:hover .proj-name { color: var(--cyan); text-shadow: 0 0 8px rgba(0,245,255,0.4); }
+
+    .proj-tags {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .proj-tag {
+      font-size: 0.45rem;
+      letter-spacing: 0.15em;
+      color: var(--green);
+      border: 1px solid rgba(0,255,136,0.2);
+      padding: 0.15rem 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .proj-link-icon {
+      position: absolute;
+      top: 0.8rem; right: 1rem;
+      font-size: 0.7rem;
+      color: rgba(0,245,255,0.25);
+      transition: color 0.3s, transform 0.3s;
+      z-index: 5;
+    }
+    .proj-card:hover .proj-link-icon {
+      color: var(--cyan);
+      transform: translate(2px, -2px);
+    }
+
+    /* ═══ MOBILE ═══ */
+    @media (max-width: 700px) {
+      .hero-portrait, .hud-frame, .portrait-scan { display: none; }
+      .hero-content { max-width: 100%; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .skills-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; text-align: center; }
+      .proj-card { width: 250px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div id="cur"></div>
+  <div id="cur-cross-h"></div>
+
+  <!-- HUD corners -->
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- Portrait scan line -->
+  <div class="portrait-scan"></div>
+
+  <!-- ═══ NAV ═══ -->
+  <nav>
+    <div class="nav-id">OM//SYS</div>
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      <span class="status-text">Online</span>
+    </div>
+    <div class="nav-loc">EGY · AL-MINYA · 30.73°N</div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+
+    <div class="hero-portrait">
+      <img src="https://github.com/Meduria.png" alt="Omar Momen" />
+    </div>
+    <div class="hud-frame"></div>
+
+    <div class="hero-content">
+      <p class="hero-sys">LOADING PROFILE · ENTITY_ID: 0xOM2E8F</p>
+
+      <h1 class="glitch-name" data-text="OMAR MOMEN">
+        OMAR<br><span class="accent">MOMEN</span>
+      </h1>
+
+      <p class="hero-role">
+        <span>FRONT-END DEV</span> · GRAPHIC DESIGNER · BUG HUNTER
+      </p>
+
+      <div class="terminal">
+        <div class="terminal-line"><span class="cmd">user</span>.<span class="cmd">name</span>     = <span class="str">"Omar Momen"</span></div>
+        <div class="terminal-line"><span class="cmd">user</span>.<span class="cmd">alias</span>    = <span class="str">"vyre_adryn"</span></div>
+        <div class="terminal-line"><span class="cmd">user</span>.<span class="cmd">location</span> = <span class="str">"Al-Minya, EGY"</span></div>
+        <div class="terminal-line"><span class="cmd">user</span>.<span class="cmd">xp</span>       = <span class="val">2</span> + <span class="val">'years'</span></div>
+        <div class="terminal-line"><span class="cmd">user</span>.<span class="cmd">status</span>   = <span class="val">true</span> <span class="cursor-blink"></span></div>
+      </div>
+
+      <div class="hero-badges">
+        <div class="badge">HTML5</div>
+        <div class="badge">CSS3</div>
+        <div class="badge">JavaScript</div>
+        <div class="badge">React</div>
+        <div class="badge">Firebase</div>
+        <div class="badge">Python</div>
+        <div class="badge">Bug Hunting</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STATS ═══ -->
+  <section class="stats-section">
+    <div class="section-wrap">
+      <div class="sec-header reveal">
+        <span class="sec-tag">// SYSTEM_STATS</span>
+        <div class="sec-line"></div>
+        <span class="sec-num">01</span>
+      </div>
+      <div class="stats-grid reveal">
+        <div class="stat-card">
+          <div class="stat-num">15+</div>
+          <div class="stat-label">Projects deployed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">5+</div>
+          <div class="stat-label">Technologies</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">2+</div>
+          <div class="stat-label">Years active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">4+</div>
+          <div class="stat-label">Dev stacks</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SKILLS ═══ -->
+  <section class="skills-section">
+    <div class="section-wrap">
+      <div class="sec-header reveal">
+        <span class="sec-tag">// SKILL_TREE</span>
+        <div class="sec-line"></div>
+        <span class="sec-num">02</span>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-card reveal" style="--pct:88%">
+          <div class="skill-card-id">MOD_001</div>
+          <div class="skill-card-title">FRONT-END DEV</div>
+          <p class="skill-card-desc">Building fast, responsive interfaces using HTML, CSS, JavaScript and React. Clean code, pixel-perfect output.</p>
+          <div class="skill-bar"><div class="skill-bar-fill"></div></div>
+        </div>
+        <div class="skill-card reveal" style="--pct:80%">
+          <div class="skill-card-id">MOD_002</div>
+          <div class="skill-card-title">UI / GRAPHIC DESIGN</div>
+          <p class="skill-card-desc">Visual identity, layout design and UI crafting. Translating concepts into premium digital aesthetics.</p>
+          <div class="skill-bar"><div class="skill-bar-fill"></div></div>
+        </div>
+        <div class="skill-card reveal" style="--pct:72%">
+          <div class="skill-card-id">MOD_003</div>
+          <div class="skill-card-title">SECURITY / BUG HUNTING</div>
+          <p class="skill-card-desc">Recognized on Google Bug Hunters. Builds with security-first thinking — finds issues before they find you.</p>
+          <div class="skill-bar"><div class="skill-bar-fill"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROJECTS MARQUEE ═══ -->
+  <section class="projects-section">
+    <div class="section-wrap">
+      <div class="sec-header reveal">
+        <span class="sec-tag">// PROJECT_LOG</span>
+        <div class="sec-line"></div>
+        <span class="sec-num">03</span>
+      </div>
+    </div>
+
+    <div class="marquee-track-wrap">
+      <div class="marquee-track" id="marqueeTrack">
+
+        <!-- Card 1 -->
+        <a href="https://coin-tracker-bice-kappa.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://coin-tracker-bice-kappa.vercel.app/" alt="Coin Tracker" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_001</div>
+            <div class="proj-name">COIN TRACKER</div>
+            <div class="proj-tags">
+              <span class="proj-tag">API</span>
+              <span class="proj-tag">JS</span>
+              <span class="proj-tag">Finance</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 2 -->
+        <a href="https://text-encoder-sooty.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://text-encoder-sooty.vercel.app/" alt="Encryptor" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_002</div>
+            <div class="proj-name">ENCRYPTOR</div>
+            <div class="proj-tags">
+              <span class="proj-tag">Security</span>
+              <span class="proj-tag">JS</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 3 -->
+        <a href="https://vertex-digital-services.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://vertex-digital-services.vercel.app/" alt="Agency Web" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_003</div>
+            <div class="proj-name">AGENCY WEB</div>
+            <div class="proj-tags">
+              <span class="proj-tag">UI</span>
+              <span class="proj-tag">CSS</span>
+              <span class="proj-tag">Landing</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 4 -->
+        <a href="https://draft-six-sandy.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://draft-six-sandy.vercel.app/" alt="Classy Template" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_004</div>
+            <div class="proj-name">CLASSY TEMPLATE</div>
+            <div class="proj-tags">
+              <span class="proj-tag">Template</span>
+              <span class="proj-tag">CSS</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 5 -->
+        <a href="https://qreate-smart-qr-generator.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://qreate-smart-qr-generator.vercel.app/" alt="QR Generator" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_005</div>
+            <div class="proj-name">QR GENERATOR</div>
+            <div class="proj-tags">
+              <span class="proj-tag">Tool</span>
+              <span class="proj-tag">JS</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 6 -->
+        <a href="https://color-code-seven.vercel.app" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://color-code-seven.vercel.app" alt="Color Code" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_006</div>
+            <div class="proj-name">COLOR CODE</div>
+            <div class="proj-tags">
+              <span class="proj-tag">Tool</span>
+              <span class="proj-tag">Design</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 7 -->
+        <a href="https://simple-landing-page-mauve.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://simple-landing-page-mauve.vercel.app/" alt="Landing Page" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_007</div>
+            <div class="proj-name">LANDING PAGE</div>
+            <div class="proj-tags">
+              <span class="proj-tag">UI</span>
+              <span class="proj-tag">HTML</span>
+              <span class="proj-tag">CSS</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 8 -->
+        <a href="https://vyre-adryn-log-in-page.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://vyre-adryn-log-in-page.vercel.app/" alt="Login Page" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_008</div>
+            <div class="proj-name">LOGIN PAGE</div>
+            <div class="proj-tags">
+              <span class="proj-tag">Auth</span>
+              <span class="proj-tag">UI</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 9 -->
+        <a href="https://ninjaa.myeasyorders.com/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://ninjaa.myeasyorders.com/" alt="Online Store" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_009</div>
+            <div class="proj-name">ONLINE STORE</div>
+            <div class="proj-tags">
+              <span class="proj-tag">E-Commerce</span>
+              <span class="proj-tag">CSS</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Duplicate set for seamless loop -->
+        <a href="https://coin-tracker-bice-kappa.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://coin-tracker-bice-kappa.vercel.app/" alt="Coin Tracker" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_001</div>
+            <div class="proj-name">COIN TRACKER</div>
+            <div class="proj-tags"><span class="proj-tag">API</span><span class="proj-tag">JS</span></div>
+          </div>
+        </a>
+        <a href="https://text-encoder-sooty.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://text-encoder-sooty.vercel.app/" alt="Encryptor" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_002</div>
+            <div class="proj-name">ENCRYPTOR</div>
+            <div class="proj-tags"><span class="proj-tag">Security</span></div>
+          </div>
+        </a>
+        <a href="https://vertex-digital-services.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://vertex-digital-services.vercel.app/" alt="Agency Web" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_003</div>
+            <div class="proj-name">AGENCY WEB</div>
+            <div class="proj-tags"><span class="proj-tag">UI</span></div>
+          </div>
+        </a>
+        <a href="https://draft-six-sandy.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://draft-six-sandy.vercel.app/" alt="Classy Template" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_004</div>
+            <div class="proj-name">CLASSY TEMPLATE</div>
+            <div class="proj-tags"><span class="proj-tag">Template</span></div>
+          </div>
+        </a>
+        <a href="https://qreate-smart-qr-generator.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://qreate-smart-qr-generator.vercel.app/" alt="QR Generator" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_005</div>
+            <div class="proj-name">QR GENERATOR</div>
+            <div class="proj-tags"><span class="proj-tag">Tool</span></div>
+          </div>
+        </a>
+        <a href="https://color-code-seven.vercel.app" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://color-code-seven.vercel.app" alt="Color Code" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_006</div>
+            <div class="proj-name">COLOR CODE</div>
+            <div class="proj-tags"><span class="proj-tag">Design</span></div>
+          </div>
+        </a>
+        <a href="https://simple-landing-page-mauve.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://simple-landing-page-mauve.vercel.app/" alt="Landing Page" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_007</div>
+            <div class="proj-name">LANDING PAGE</div>
+            <div class="proj-tags"><span class="proj-tag">UI</span></div>
+          </div>
+        </a>
+        <a href="https://vyre-adryn-log-in-page.vercel.app/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://vyre-adryn-log-in-page.vercel.app/" alt="Login Page" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_008</div>
+            <div class="proj-name">LOGIN PAGE</div>
+            <div class="proj-tags"><span class="proj-tag">Auth</span></div>
+          </div>
+        </a>
+        <a href="https://ninjaa.myeasyorders.com/" target="_blank" rel="noopener" class="proj-card">
+          <span class="proj-link-icon">↗</span>
+          <div class="proj-thumb-wrap">
+            <img class="proj-thumb" src="https://image.thum.io/get/width/600/https://ninjaa.myeasyorders.com/" alt="Online Store" loading="lazy" />
+          </div>
+          <div class="proj-info">
+            <div class="proj-id">PROJ_009</div>
+            <div class="proj-name">ONLINE STORE</div>
+            <div class="proj-tags"><span class="proj-tag">E-Commerce</span></div>
+          </div>
+        </a>
+
+      </div><!-- end marquee-track -->
+    </div><!-- end marquee-track-wrap -->
+  </section>
+
+  <!-- ═══ SERVICES ═══ -->
+  <section class="services-section">
+    <div class="section-wrap">
+      <div class="sec-header reveal">
+        <span class="sec-tag">// SERVICE_CATALOG</span>
+        <div class="sec-line"></div>
+        <span class="sec-num">04</span>
+      </div>
+      <ul class="services-list reveal">
+        <li class="service-row">
+          <span class="service-name">Personal Website</span>
+          <span class="service-price">$70</span>
+        </li>
+        <li class="service-row">
+          <span class="service-name">Product Website</span>
+          <span class="service-price">$80</span>
+        </li>
+        <li class="service-row">
+          <span class="service-name">Business Webpage</span>
+          <span class="service-price">$100</span>
+        </li>
+        <li class="service-row">
+          <span class="service-name">Service-Based Website</span>
+          <span class="service-price">$120</span>
+        </li>
+        <li class="service-row">
+          <span class="service-name">Online Store</span>
+          <span class="service-price">$150</span>
+        </li>
+        <li class="service-row">
+          <span class="service-name">Custom / Other</span>
+          <span class="service-price">NEGOTIATE</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══ CONNECT ═══ -->
+  <section class="connect-section">
+    <div class="section-wrap">
+      <div class="sec-header reveal">
+        <span class="sec-tag">// CONNECT_NODES</span>
+        <div class="sec-line"></div>
+        <span class="sec-num">05</span>
+      </div>
+      <div class="social-grid reveal">
+        <a href="https://github.com/Meduria" target="_blank" rel="noopener" class="social-card">
+          <div class="sc-id">NODE_01</div>
+          <div class="sc-name">GITHUB</div>
+          <div class="sc-handle">Meduria</div>
+          <span class="sc-arrow">↗</span>
+        </a>
+        <a href="https://www.linkedin.com/in/omar-momen-36b58330b" target="_blank" rel="noopener" class="social-card">
+          <div class="sc-id">NODE_02</div>
+          <div class="sc-name">LINKEDIN</div>
+          <div class="sc-handle">Omar Momen</div>
+          <span class="sc-arrow">↗</span>
+        </a>
+        <a href="https://www.behance.net/omarmohamed546" target="_blank" rel="noopener" class="social-card">
+          <div class="sc-id">NODE_03</div>
+          <div class="sc-name">BEHANCE</div>
+          <div class="sc-handle">omarmohamed546</div>
+          <span class="sc-arrow">↗</span>
+        </a>
+        <a href="https://www.instagram.com/omar.m.jpg/" target="_blank" rel="noopener" class="social-card">
+          <div class="sc-id">NODE_04</div>
+          <div class="sc-name">INSTAGRAM</div>
+          <div class="sc-handle">@omar.m.jpg</div>
+          <span class="sc-arrow">↗</span>
+        </a>
+        <a href="https://t.me/vyre_adryn" target="_blank" rel="noopener" class="social-card">
+          <div class="sc-id">NODE_05</div>
+          <div class="sc-name">TELEGRAM</div>
+          <div class="sc-handle">vyre_adryn</div>
+          <span class="sc-arrow">↗</span>
+        </a>
+        <a href="https://wa.me/201092664583" target="_blank" rel="noopener" class="social-card">
+          <div class="sc-id">NODE_06</div>
+          <div class="sc-name">WHATSAPP</div>
+          <div class="sc-handle">+20 109 266 4583</div>
+          <span class="sc-arrow">↗</span>
+        </a>
+        <a href="https://bughunters.google.com/profile/835a8eee-5a21-40bf-b8b0-1de227265304" target="_blank" rel="noopener" class="social-card">
+          <div class="sc-id">NODE_07</div>
+          <div class="sc-name">BUG HUNTERS</div>
+          <div class="sc-handle">Google Verified</div>
+          <span class="sc-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="footer-id">OMAR_MOMEN // v2.8</div>
+    <div class="footer-copy">EGY · 30.73°N 28.08°E · All systems operational</div>
+    <div class="footer-ping"><div class="dot"></div> PING: 1ms</div>
+  </footer>
+
+  <script>
+    // Cursor crosshair
+    const cur = document.getElementById('cur');
+    const curH = document.getElementById('cur-cross-h');
+    document.addEventListener('mousemove', e => {
+      cur.style.left = e.clientX + 'px';
+      cur.style.top  = e.clientY + 'px';
+      curH.style.left = e.clientX + 'px';
+      curH.style.top  = e.clientY + 'px';
+    });
+
+    // Scroll reveal + skill bar trigger
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('vis');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal, .skill-card').forEach(el => obs.observe(el));
+
+    // Typing effect for terminal (re-types on load)
+    const lines = document.querySelectorAll('.terminal-line');
+    lines.forEach((line, i) => {
+      line.style.opacity = '0';
+      setTimeout(() => {
+        line.style.transition = 'opacity 0.3s ease';
+        line.style.opacity = '1';
+      }, 300 + i * 180);
+    });
+  </script>
+</body>
+</html>
