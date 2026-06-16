@@ -251,24 +251,54 @@
     }
 
     /* Hero left content */
-    .share-btn {
-  position: absolute; top: 14px; right: 14px;
-  width: 36px; height: 36px; border-radius: 50%;
-  background: #1a1a1a; border: 1px solid #2a2a2a;
-  color: #aaa; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s, color 0.2s, transform 0.15s;
+.share-btn {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  background: rgba(0,15,25,0.85);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  /* مربع مقصوص الزاوية */
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
-.share-btn:hover { background: #222; color: #fff; border-color: #444; transform: scale(1.08); }
+.share-btn:hover {
+  background: var(--cyan-dim);
+  box-shadow: 0 0 16px var(--cyan-dim);
+  transform: scale(1.06);
+}
+.share-btn:active { transform: scale(0.94); }
+
 .toast {
-  position: fixed; bottom: 28px; left: 50%;
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
   transform: translateX(-50%) translateY(20px);
-  background: #1a1a1a; border: 1px solid #2a2a2a;
-  color: #aaa; font-family: 'Courier New', monospace;
-  font-size: 12px; padding: 8px 18px; border-radius: 20px;
-  opacity: 0; transition: opacity 0.25s, transform 0.25s; pointer-events: none;
+  background: rgba(0,15,25,0.95);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  padding: 8px 20px;
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 9000;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
     .hero-content {
       position: relative;
       z-index: 10;
@@ -865,6 +895,15 @@
 </head>
 <body>
 
+<button class="share-btn" id="shareBtn" aria-label="Share" title="Share">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+    <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
+    <polyline points="16 6 12 2 8 6"/>
+    <line x1="12" y1="2" x2="12" y2="15"/>
+  </svg>
+</button>
+<div class="toast" id="toast">// LINK_COPIED ✓</div>
   <!-- Cursor -->
   <div id="cur"></div>
   <div id="cur-cross-h"></div>
@@ -899,15 +938,7 @@
 
     <div class="hero-content">
       <p class="hero-sys">LOADING PROFILE · ENTITY_ID: 0xOM2E8F</p>
-<button class="share-btn" id="shareBtn" aria-label="Share" title="Share">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-       stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-    <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
-    <polyline points="16 6 12 2 8 6"/>
-    <line x1="12" y1="2" x2="12" y2="15"/>
-  </svg>
-</button>
-<div class="toast" id="toast">// LINK_COPIED</div>
+
       <h1 class="glitch-name" data-text="OMAR MOMEN">
         OMAR<br><span class="accent">MOMEN</span>
       </h1>
@@ -1466,9 +1497,27 @@
       }, 300 + i * 180);
     });
     document.getElementById('shareBtn').addEventListener('click', async () => {
-  const url = 'https://me-omar.vercel.app/';
-  if (navigator.share) { await navigator.share({ title: 'OMAR_MOMEN', url }); return; }
-  await navigator.clipboard.writeText(url);
+  const url   = 'https://me-omar.vercel.app/';
+  const title = 'OMAR_MOMEN';
+  const text  = 'Check out Omar Momen — Egyptian front-end developer & graphic designer. Clean code, premium aesthetics. 🚀';
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, text, url });
+      return;
+    } catch (_) {}
+  }
+
+  try { await navigator.clipboard.writeText(url); }
+  catch (_) {
+    const tmp = document.createElement('input');
+    tmp.value = url;
+    document.body.appendChild(tmp);
+    tmp.select();
+    document.execCommand('copy');
+    document.body.removeChild(tmp);
+  }
+
   const t = document.getElementById('toast');
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
