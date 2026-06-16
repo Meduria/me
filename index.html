@@ -75,11 +75,11 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
     #cur-cross-h {
       position: fixed;
       width: 20px; height: 1px;
-      background: var(--cyan);
+      background-color: #ffd7000 ;
       pointer-events: none;
       z-index: 9999;
       transform: translate(-50%,-50%);
-      box-shadow: 0 0 6px var(--cyan);
+      box-shadow: 0 0 6px #ffd700;
     }
 
     /* ═══ SCANLINES ═══ */
@@ -139,8 +139,8 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.2em;
-      color: var(--cyan);
-      text-shadow: 0 0 12px var(--cyan);
+      color: #ffd700;
+      text-shadow: 0 0 12px #ffd700;
     }
     .nav-status {
       display: flex;
@@ -622,6 +622,7 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
     .service-row:hover { background: var(--cyan-glow); padding-left: 2rem; }
     .service-row:hover::before { transform: scaleY(1); }
     .service-name {
+      color:#ffd700;
       font-family: 'Exo 2', sans-serif;
       font-size: 0.85rem;
       font-weight: 300;
