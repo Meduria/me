@@ -251,6 +251,24 @@
     }
 
     /* Hero left content */
+    .share-btn {
+  position: absolute; top: 14px; right: 14px;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #1a1a1a; border: 1px solid #2a2a2a;
+  color: #aaa; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+.share-btn:hover { background: #222; color: #fff; border-color: #444; transform: scale(1.08); }
+.toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1a1a1a; border: 1px solid #2a2a2a;
+  color: #aaa; font-family: 'Courier New', monospace;
+  font-size: 12px; padding: 8px 18px; border-radius: 20px;
+  opacity: 0; transition: opacity 0.25s, transform 0.25s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .hero-content {
       position: relative;
       z-index: 10;
@@ -881,7 +899,15 @@
 
     <div class="hero-content">
       <p class="hero-sys">LOADING PROFILE · ENTITY_ID: 0xOM2E8F</p>
-
+<button class="share-btn" id="shareBtn" aria-label="Share" title="Share">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+    <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
+    <polyline points="16 6 12 2 8 6"/>
+    <line x1="12" y1="2" x2="12" y2="15"/>
+  </svg>
+</button>
+<div class="toast" id="toast">// LINK_COPIED</div>
       <h1 class="glitch-name" data-text="OMAR MOMEN">
         OMAR<br><span class="accent">MOMEN</span>
       </h1>
@@ -1439,6 +1465,14 @@
         line.style.opacity = '1';
       }, 300 + i * 180);
     });
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+  const url = 'https://me-omar.vercel.app/';
+  if (navigator.share) { await navigator.share({ title: 'OMAR_MOMEN', url }); return; }
+  await navigator.clipboard.writeText(url);
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+});
   </script>
 </body>
 </html>
