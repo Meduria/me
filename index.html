@@ -338,12 +338,12 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
       font-weight: 900;
       line-height: 0.95;
       letter-spacing: 0.04em;
-      color: var(--white);
+      color: #ffd700;
       position: relative;
       text-shadow: 0 0 30px rgba(0,245,255,0.2);
       animation: fadeU 0.8s ease 0.15s both;
     }
-    .glitch-name .accent { color: var(--cyan); text-shadow: 0 0 20px var(--cyan), 0 0 60px rgba(0,245,255,0.4); }
+    .glitch-name .accent { color:#ffd700; text-shadow: 0 0 20px #ffd700, 0 0 60px rgba(0,245,255,0.4); }
 
     /* Glitch effect */
     .glitch-name::before,
@@ -359,7 +359,7 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
       clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
     }
     .glitch-name::after {
-      color: var(--cyan);
+      color: #ffd700;
       animation: glitch2 5s infinite;
       clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
     }
@@ -391,6 +391,8 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
 
     /* Terminal block */
     .terminal {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
       background: var(--panel);
       border: 1px solid var(--border);
       padding: 1.2rem 1.5rem;
@@ -956,10 +958,10 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
   <section class="hero">
     <div class="hero-glow"></div>
 
-    <div class="hero-portrait">
+   <!-- <div class="hero-portrait">
       <img src="https://github.com/Meduria.png" alt="Omar Momen" />
     </div>
-    <div class="hud-frame"></div>
+    <div class="hud-frame"></div>-->
 
     <div class="hero-content">
       <p class="hero-sys">LOADING PROFILE · ENTITY_ID: 0xOM2E8F</p>
