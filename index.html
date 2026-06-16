@@ -20,7 +20,7 @@
     :root {
       --bg:       #030508;
       --bg2:      #060c12;
-      --cyan:     #00fcff;
+      --cyan:     #00f5ff;
       --cyan-dim: rgba(0,245,255,0.15);
       --cyan-glow:rgba(0,245,255,0.06);
       --green:    #00ff88;
@@ -200,19 +200,18 @@
       align-items: flex-end;
       z-index: 2;
       overflow: hidden;
-      background-color:black;
     }
     .hero-portrait img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: top;
-   /*  filter: grayscale(100%) contrast(1.2) brightness(1);
-      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, transparent 100%),
+      filter: grayscale(100%) contrast(1.2) brightness(0.85);
+      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.5) 0%, transparent 100%),
                           linear-gradient(to top, transparent 0%, black 18%);
-      mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, transparent 100%);
-    /*  mix-blend-mode: screen;
-      opacity: 0; */
+      mask-image: linear-gradient(to left, rgba(0,0,0,0.5) 0%, transparent 100%);
+      mix-blend-mode: screen;
+      opacity: 0;
       animation: imgIn 1s ease 0.8s forwards;
     }
     /* cyan tint overlay on portrait */
@@ -223,7 +222,7 @@
       pointer-events: none;
     }
     @keyframes imgIn {
-      to { opacity: 0.9; }
+      to { opacity: 0.75; }
     }
 
     /* HUD frame around portrait */
@@ -361,7 +360,7 @@
       clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
     }
     .glitch-name::after {
-      color:#0000ff;
+      color: var(--cyan);
       animation: glitch2 5s infinite;
       clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
     }
@@ -377,9 +376,6 @@
     }
 
     .hero-role {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      padding:0.35rem 1.8rem;
       font-family: 'Exo 2', sans-serif;
       font-size: clamp(0.8rem, 1.5vw, 1rem);
       font-weight: 200;
@@ -430,9 +426,6 @@
     }
 
     .hero-badges {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      padding:0.7rem 1.5rem;
       display: flex;
       flex-wrap: wrap;
       gap: 0.6rem;
@@ -506,8 +499,8 @@
       background: var(--border);
     }
     .stat-card {
-     /* background: var(--bg2);
-      padding: 2.2rem 1.5rem;*/
+      background: var(--bg2);
+      padding: 2.2rem 1.5rem;
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -528,7 +521,7 @@
       font-family: 'Orbitron', monospace;
       font-size: 2.8rem;
       font-weight: 900;
-      color: #0000ff;
+      color: var(--cyan);
       text-shadow: 0 0 20px rgba(0,245,255,0.4);
       line-height: 1;
     }
@@ -536,7 +529,7 @@
       font-size: 0.5rem;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: #0000ff;
+      color: var(--muted);
       margin-top: 0.5rem;
     }
 
@@ -961,10 +954,10 @@
   <section class="hero">
     <div class="hero-glow"></div>
 
-   <!-- <div class="hero-portrait">
+    <div class="hero-portrait">
       <img src="https://github.com/Meduria.png" alt="Omar Momen" />
     </div>
-    <div class="hud-frame"></div>-->
+    <div class="hud-frame"></div>
 
     <div class="hero-content">
       <p class="hero-sys">LOADING PROFILE · ENTITY_ID: 0xOM2E8F</p>
