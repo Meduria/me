@@ -20,7 +20,7 @@
     :root {
       --bg:       #030508;
       --bg2:      #060c12;
-      --cyan:     #00f5ff;
+      --cyan:     #0000ff;
       --cyan-dim: rgba(0,245,255,0.15);
       --cyan-glow:rgba(0,245,255,0.06);
       --green:    #00ff88;
@@ -55,7 +55,7 @@
 
 .video-background video {
   width: 100%;
-  height: 70%;
+  height: 100%;
   object-fit: cover;
 
   /* إزالة الأسود وإبراز الذهبي */
@@ -200,18 +200,19 @@
       align-items: flex-end;
       z-index: 2;
       overflow: hidden;
+      background-color:black;
     }
     .hero-portrait img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: top;
-   <  filter: grayscale(100%) contrast(1.2) brightness(1);
+   /*  filter: grayscale(100%) contrast(1.2) brightness(1);
       -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, transparent 100%),
                           linear-gradient(to top, transparent 0%, black 18%);
       mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, transparent 100%);
-    /*  mix-blend-mode: screen;*/
-      opacity: 0;
+    /*  mix-blend-mode: screen;
+      opacity: 0; */
       animation: imgIn 1s ease 0.8s forwards;
     }
     /* cyan tint overlay on portrait */
