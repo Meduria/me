@@ -205,12 +205,6 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
       height: 100%;
       object-fit: cover;
       object-position: top;
-      filter: grayscale(100%) contrast(1.2) brightness(0.85);
-      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.5) 0%, transparent 100%),
-                          linear-gradient(to top, transparent 0%, black 18%);
-      mask-image: linear-gradient(to left, rgba(0,0,0,0.5) 0%, transparent 100%);
-      mix-blend-mode: screen;
-      opacity: 0;
       animation: imgIn 1s ease 0.8s forwards;
     }
     /* cyan tint overlay on portrait */
@@ -958,10 +952,10 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
   <section class="hero">
     <div class="hero-glow"></div>
 
-   <!-- <div class="hero-portrait">
-      <img src="https://github.com/Meduria.png" alt="Omar Momen" />
+    <div class="hero-portrait">
+      <img src="gradient.png" alt="Omar Momen" />
     </div>
-    <div class="hud-frame"></div>-->
+    <div class="hud-frame"></div>
 
     <div class="hero-content">
       <p class="hero-sys">LOADING PROFILE · ENTITY_ID: 0xOM2E8F</p>
