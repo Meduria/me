@@ -748,7 +748,7 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
     .reveal.vis { opacity: 1; transform: none; }
 
     /* ═══ PROJECTS MARQUEE ═══ */
-    .projects-section { padding: 4rem 0 5rem; overflow: hidden; z-index:-99999; }
+    .projects-section { padding: 4rem 0 5rem; overflow: hidden; z-index:-9000; }
 
     .marquee-track-wrap {
       position: relative;
@@ -783,6 +783,7 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
       display: block;
       overflow: hidden;
       transition: border-color 0.3s, box-shadow 0.3s;
+      z-index: -9000;
 
       /* bottom-right corner clipped */
       clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
