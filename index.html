@@ -288,8 +288,8 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
 .share-btn:hover {
-  background: var(--cyan-dim);
-  box-shadow: 0 0 16px var(--cyan-dim);
+  background-color: #ffd700 ;
+  box-shadow: 0 0 16px #ffd700;
   transform: scale(1.06);
 }
 .share-btn:active { transform: scale(0.94); }
@@ -399,7 +399,6 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
       max-width: 480px;
       position: relative;
       animation: fadeU 0.9s ease 0.5s both;
-      z-index: -2;
     }
     .terminal::before {
       content: '● ● ●';
@@ -784,8 +783,6 @@ transform: /*translate(-50%, -50%)*/ rotate(-90deg);
       display: block;
       overflow: hidden;
       transition: border-color 0.3s, box-shadow 0.3s;
-      z-index: -9000;
-
       /* bottom-right corner clipped */
       clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
     }
