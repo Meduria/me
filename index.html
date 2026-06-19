@@ -945,6 +945,9 @@ color:#ffd700;
   </style>
 </head>
 <body>
+  <audio autoplay loop muted>
+  <source src="song.mp3" type="audio/mpeg">
+  </audio>
 <div class="video-background">
   <video autoplay muted loop playsinline>
     <source src="0_Dragon_Scales_Gold_Scales_1920x1080.mp4" type="video/mp4">
@@ -1607,6 +1610,9 @@ color:#ffd700;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 });
+    document.addEventListener('click', function() {
+  document.querySelector('audio').muted = false;
+}, { once: true });
   </script>
 </body>
 </html>
