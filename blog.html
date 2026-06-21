@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>記録 // VIRE_ADRYN LOG</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+  :root{
+    --yellow:#f4d03f;
+    --yellow-bright:#ffe566;
+    --cyan:#39e6e6;
+    --cyan-dim:#1d7a7a;
+    --bg:#08090c;
+    --bg-panel:#0e1014;
+    --bg-panel2:#121620;
+    --line:rgba(244,208,63,0.25);
+    --text-dim:#8a93a3;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(57,230,230,0.07), transparent 35%),
+      radial-gradient(circle at 85% 80%, rgba(244,208,63,0.06), transparent 40%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
+    color:#dfe3ea;
+    font-family:'Share Tech Mono', monospace;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    border-bottom:1px solid var(--line);
+    padding:28px 6vw 22px;
+    position:relative;
+  }
+  .eyebrow{
+    color:var(--cyan);
+    font-size:11px;
+    letter-spacing:3px;
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:14px;
+    opacity:0.85;
+  }
+  .eyebrow span::before{content:"// ";color:var(--yellow);}
+  h1.brand{
+    font-family:'Noto Sans JP', sans-serif;
+    font-weight:900;
+    font-size:clamp(28px,5vw,52px);
+    letter-spacing:2px;
+    color:var(--yellow-bright);
+    text-shadow:0 0 18px rgba(244,208,63,0.35);
+    line-height:1.05;
+  }
+  h1.brand .jp{color:var(--cyan);text-shadow:0 0 18px rgba(57,230,230,0.45);font-size:0.6em;margin-left:10px;}
+  .subhead{
+    color:var(--text-dim);
+    font-size:13px;
+    margin-top:10px;
+    letter-spacing:1px;
+  }
+  .subhead b{color:var(--cyan);font-weight:400;}
+
+  /* ---------- SECTION LABEL ---------- */
+  .section-label{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:50px 6vw 26px;
+  }
+  .section-label .num{
+    font-family:'Noto Sans JP',sans-serif;
+    font-weight:900;
+    font-size:13px;
+    color:var(--bg);
+    background:var(--yellow);
+    padding:4px 10px;
+    clip-path:polygon(0 0,100% 0,100% 70%,90% 100%,0 100%);
+  }
+  .section-label .lbl{
+    font-size:13px;
+    letter-spacing:4px;
+    color:var(--cyan);
+  }
+  .section-label .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+
+  /* ---------- GRID ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:26px;
+    padding:0 6vw 80px;
+  }
+
+  /* cut-corner yellow box */
+  .post-box{
+    position:relative;
+    aspect-ratio:1/1;
+    background:linear-gradient(155deg,var(--bg-panel2),var(--bg-panel) 60%);
+    clip-path:polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 26px 100%, 0 calc(100% - 26px));
+    cursor:pointer;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+    overflow:hidden;
+  }
+  .post-box::before{
+    content:"";
+    position:absolute;inset:0;
+    padding:1.5px;
+    background:linear-gradient(135deg,var(--yellow) 0%, rgba(244,208,63,0.15) 35%, rgba(57,230,230,0.5) 70%, var(--cyan) 100%);
+    clip-path:inherit;
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    pointer-events:none;
+  }
+  .post-box::after{
+    content:"";
+    position:absolute;
+    top:0;right:0;
+    width:26px;height:26px;
+    background:var(--yellow);
+    clip-path:polygon(100% 0,0 0,100% 100%);
+    opacity:0.85;
+  }
+  .post-box:hover{
+    transform:translateY(-4px);
+    box-shadow:0 0 0 1px rgba(57,230,230,0.4), 0 18px 40px -12px rgba(244,208,63,0.25), 0 0 30px -4px rgba(57,230,230,0.3);
+    background:linear-gradient(155deg,#161b27,var(--bg-panel) 60%);
+  }
+
+  .post-id{
+    font-size:11px;
+    color:var(--cyan);
+    letter-spacing:2px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .post-id .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 8px var(--cyan);
+    display:inline-block;
+    margin-right:6px;
+    animation:blink 1.8s infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+  .post-title{
+    font-family:'Noto Sans JP',sans-serif;
+    font-weight:700;
+    font-size:18px;
+    color:var(--yellow-bright);
+    line-height:1.3;
+    margin-bottom:12px;
+  }
+  .post-title .jp-tag{
+    display:block;
+    font-size:11px;
+    color:var(--cyan-dim);
+    font-weight:400;
+    margin-top:4px;
+    letter-spacing:2px;
+  }
+
+  .post-excerpt{
+    font-size:13px;
+    color:var(--text-dim);
+    line-height:1.6;
+    flex:1;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+
+  .post-footer{
+    margin-top:14px;
+    font-size:11px;
+    color:var(--cyan);
+    letter-spacing:1.5px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:1px dashed var(--line);
+    padding-top:10px;
+  }
+  .post-footer .open-arrow{color:var(--yellow);transition:transform .2s;}
+  .post-box:hover .open-arrow{transform:translateX(4px);}
+
+  /* ---------- TERMINAL MODAL ---------- */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(3,4,6,0.85);
+    backdrop-filter:blur(4px);
+    display:none;
+    align-items:center;justify-content:center;
+    z-index:1000;
+    padding:20px;
+  }
+  .overlay.active{display:flex;}
+
+  .terminal{
+    width:min(720px,100%);
+    max-height:82vh;
+    background:#070a08;
+    border:1px solid var(--cyan-dim);
+    box-shadow:0 0 0 1px rgba(244,208,63,0.15), 0 0 60px rgba(57,230,230,0.15), 0 30px 80px rgba(0,0,0,0.6);
+    display:flex;
+    flex-direction:column;
+    font-family:'Share Tech Mono',monospace;
+    animation:termIn .22s ease;
+  }
+  @keyframes termIn{from{opacity:0;transform:scale(0.96) translateY(10px);}to{opacity:1;transform:none;}}
+
+  .term-bar{
+    background:linear-gradient(90deg,#151a14,#0d100d);
+    border-bottom:1px solid var(--cyan-dim);
+    padding:9px 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .term-bar .lights{display:flex;gap:7px;}
+  .term-bar .lights span{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .term-bar .lights .r{background:#ff5f56;}
+  .term-bar .lights .y{background:var(--yellow);}
+  .term-bar .lights .g{background:var(--cyan);}
+  .term-bar .path{font-size:11px;color:var(--cyan);letter-spacing:1px;}
+  .term-bar .close-btn{
+    background:none;border:1px solid var(--yellow);
+    color:var(--yellow);
+    font-family:inherit;font-size:11px;
+    padding:3px 10px;
+    cursor:pointer;
+    letter-spacing:1px;
+  }
+  .term-bar .close-btn:hover{background:var(--yellow);color:#000;}
+
+  .term-body{
+    padding:22px 24px 30px;
+    overflow-y:auto;
+    color:#9dffb0;
+    font-size:13.5px;
+    line-height:1.85;
+  }
+  .term-body::-webkit-scrollbar{width:8px;}
+  .term-body::-webkit-scrollbar-thumb{background:var(--cyan-dim);}
+  .term-body::-webkit-scrollbar-track{background:#0a0c0a;}
+
+  .term-line{white-space:pre-wrap;}
+  .term-prompt{color:var(--cyan);}
+  .term-title{
+    color:var(--yellow-bright);
+    font-family:'Noto Sans JP',sans-serif;
+    font-weight:700;
+    font-size:19px;
+    margin:4px 0 16px;
+  }
+  .term-meta{color:var(--cyan-dim);font-size:11px;margin-bottom:18px;letter-spacing:1px;}
+  .term-content p{margin-bottom:14px;color:#cfe8d4;}
+  .term-content .accent{color:var(--yellow);}
+  .term-cursor{
+    display:inline-block;width:8px;height:14px;background:var(--cyan);
+    vertical-align:middle;margin-left:2px;
+    animation:blink 1s steps(2) infinite;
+  }
+  .term-footer-line{margin-top:20px;color:var(--text-dim);font-size:11px;border-top:1px dashed rgba(57,230,230,0.2);padding-top:14px;}
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:24px 6vw;
+    display:flex;justify-content:space-between;
+    font-size:11px;color:var(--text-dim);letter-spacing:1.5px;
+  }
+  footer .cy{color:var(--cyan);}
+
+  @media(max-width:520px){
+    .grid{grid-template-columns:1fr;}
+    .section-label{margin:36px 5vw 20px;}
+    header{padding:22px 5vw 18px;}
+    footer{flex-direction:column;gap:6px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">
+    <span>ENTITY_ID: 0xOM2E8F</span>
+    <span>AL-MINYA · 30.73°N</span>
+  </div>
+  <h1 class="brand">記録 LOG <span class="jp">雄偉アドリン</span></h1>
+  <div class="subhead">Field notes from <b>vire_adryn</b> — code, security, design. Click a box to decrypt the full entry.</div>
+</header>
+
+<div class="section-label">
+  <div class="num">06</div>
+  <div class="lbl">ENTRY_ARCHIVE</div>
+  <div class="rule"></div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  <span>OMAR_MOMEN // v2.8</span>
+  <span class="cy">ARCHIVE STATUS: ONLINE</span>
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="path" id="termPath">~/log/entry</div>
+      <button class="close-btn" id="closeBtn">[ X ] CLOSE</button>
+    </div>
+    <div class="term-body" id="termBody"></div>
+  </div>
+</div>
+
+<script>
+const posts = [
+  {
+    id: "LOG_001",
+    jp: "防御の心",
+    title: "Why I Build With Security First",
+    excerpt: "Most devs bolt security on at the end. I learned the hard way that the cheapest fix is the one you make before the feature ships, not after.",
+    body: [
+      "Every project starts the same way for me: before a single button is styled, I ask what happens if someone tries to break this.",
+      "Getting recognized on Google Bug Hunters changed how I write code permanently. It's not about being paranoid — it's about treating every input field, every API call, every form as a potential attack surface from line one.",
+      "The pattern I follow: validate on the server, never trust the client, encrypt anything that matters, and log everything quietly in the background. None of this is glamorous. None of it shows up in a portfolio screenshot. But it's the difference between a site that survives contact with the real internet and one that doesn't.",
+      "If you're a junior dev reading this — learn to think like an attacker for ten minutes a day. It'll save you a hundred hours of cleanup later."
+    ],
+    meta: "ACCESS_LEVEL: PUBLIC · TAGS: security, bug-hunting, mindset"
+  },
+  {
+    id: "LOG_002",
+    jp: "速さの美学",
+    title: "Designing Interfaces That Feel Instant",
+    excerpt: "Speed is a design choice, not a backend afterthought. A page that loads in 400ms feels more premium than one that loads in 4s, no matter how polished the visuals.",
+    body: [
+      "Clients ask for 'premium' design constantly. What they actually mean, most of the time, is responsiveness — both visual and literal.",
+      "I treat performance as a UI element. Every animation gets a budget. Every image gets compressed before it ever touches a layout. Every interaction — hover, click, scroll — has to respond in under 100ms or it reads as broken, even if it isn't.",
+      "The trick with cyberpunk-style interfaces specifically is balancing density with breathing room. Glitch effects and neon borders look great in a screenshot, but if they cost you 30fps on a mid-range phone, you've made a worse product, not a cooler one.",
+      "My rule: design the loud version first, then quietly remove half the effects until only the ones that actually serve the content survive."
+    ],
+    meta: "ACCESS_LEVEL: PUBLIC · TAGS: performance, ui, animation"
+  },
+  {
+    id: "LOG_003",
+    jp: "契約の技術",
+    title: "Pricing Freelance Work Without Underselling Yourself",
+    excerpt: "Starting at $70 doesn't mean undervaluing the work — it means understanding exactly what's included and what isn't, before the first line of code.",
+    body: [
+      "When I set up the service catalog — Personal, Product, Business, Service-based, Store — the goal wasn't to be the cheapest option. It was to remove ambiguity.",
+      "Most freelance disputes don't come from bad code. They come from mismatched expectations. A client thinks 'website' means twelve pages with a CMS; you quoted for a five-page static build. Define scope in writing, always.",
+      "I structure every quote around three questions: what pages exist, what functionality is dynamic vs static, and who's hosting it. Answer those up front and 90% of scope-creep disappears before it starts.",
+      "Negotiation isn't a weakness in pricing — it's a feature, as long as both sides know what's actually being negotiated."
+    ],
+    meta: "ACCESS_LEVEL: PUBLIC · TAGS: freelance, business, pricing"
+  },
+  {
+    id: "LOG_004",
+    jp: "型の継承",
+    title: "Building UMCP: A Protocol for AI Context",
+    excerpt: "UMCP started as a personal annoyance — re-explaining context to AI tools every session — and grew into a small protocol I now use across every project.",
+    body: [
+      "The idea behind UMCP is simple: a structured, portable format for describing a project's context so an AI assistant doesn't need to be re-briefed from zero every conversation.",
+      "I built it after wasting hours re-typing the same project structure into different chat windows. JSON felt like the right backbone — readable by both humans and machines, easy to version, easy to diff.",
+      "It's still early, still evolving, but the core principle won't change: context should travel with the project, not live in someone's memory or a Slack thread that gets lost in two weeks.",
+      "If you're curious, the protocol and a live demo are linked from the main site. I'm actively iterating on it."
+    ],
+    meta: "ACCESS_LEVEL: PUBLIC · TAGS: ai, protocol, tooling"
+  },
+  {
+    id: "LOG_005",
+    jp: "暗号の遊び",
+    title: "What I Learned Building an Encryptor as a Side Project",
+    excerpt: "PROJ_002 started as a weekend experiment with the Web Crypto API. It taught me more about JS async patterns than any tutorial did.",
+    body: [
+      "The Encryptor project wasn't meant to be a serious security tool — it was meant to teach me the Web Crypto API properly, instead of copy-pasting from documentation I didn't fully understand.",
+      "Working directly with ArrayBuffers, key derivation, and async encryption calls forces a different mental model than typical front-end work. You can't fake your way through it with CSS tricks.",
+      "What surprised me most was how unforgiving the API is about mistakes — a single wrong byte order and your decrypted output is garbage with no helpful error message. That kind of friction is good for learning. It made me slower, more deliberate, and a lot more careful with every project after it.",
+      "Small side projects like this one are where I actually grow. Client work pays the bills; side projects build the skill that client work depends on."
+    ],
+    meta: "ACCESS_LEVEL: PUBLIC · TAGS: javascript, crypto, side-project"
+  },
+  {
+    id: "LOG_006",
+    jp: "静寂の作業",
+    title: "Working From Al-Minya: Freelancing Outside the Hub Cities",
+    excerpt: "You don't need to be in Cairo, Dubai, or San Francisco to build for clients there. The internet erased that requirement years ago — most people just haven't updated their assumptions.",
+    body: [
+      "I work with clients across Egypt, the UK, the US, and the UAE from Al-Minya — a city that isn't on anyone's 'tech hub' list. It's never been the limiting factor people assume it would be.",
+      "What actually matters: a stable connection, clear async communication, and being upfront about timezones. Clients don't care where you're typing from if the deliverable shows up clean and on time.",
+      "There's an unexpected upside to working outside a hub city too — fewer distractions, lower cost of living, and a slower pace that leaves more room for the side projects and skill-building that actually move a freelance career forward.",
+      "Location used to be a gatekeeper for this kind of work. Now it's mostly just a detail in the metadata."
+    ],
+    meta: "ACCESS_LEVEL: PUBLIC · TAGS: freelance, remote-work, life"
+  }
+];
+
+const grid = document.getElementById('grid');
+const overlay = document.getElementById('overlay');
+const termBody = document.getElementById('termBody');
+const termPath = document.getElementById('termPath');
+const closeBtn = document.getElementById('closeBtn');
+
+posts.forEach((p, i) => {
+  const box = document.createElement('div');
+  box.className = 'post-box';
+  box.innerHTML = `
+    <div class="post-id"><span><span class="dot"></span>${p.id}</span><span>${String(i+1).padStart(2,'0')}/0${posts.length}</span></div>
+    <div class="post-title">${p.title}<span class="jp-tag">${p.jp}</span></div>
+    <div class="post-excerpt">${p.excerpt}</div>
+    <div class="post-footer"><span>READ_MORE</span><span class="open-arrow">▶▶</span></div>
+  `;
+  box.addEventListener('click', () => openTerminal(p));
+  grid.appendChild(box);
+});
+
+function openTerminal(p){
+  termPath.textContent = `~/log/${p.id.toLowerCase()}`;
+  termBody.innerHTML = `
+    <div class="term-line"><span class="term-prompt">vire@adryn:~$</span> cat ${p.id.toLowerCase()}.log</div>
+    <div class="term-title">${p.title}</div>
+    <div class="term-meta">${p.meta}</div>
+    <div class="term-content">
+      ${p.body.map(par => `<p>${par}</p>`).join('')}
+    </div>
+    <div class="term-footer-line">[ EOF ] entry decrypted successfully<span class="term-cursor"></span></div>
+  `;
+  overlay.classList.add('active');
+}
+
+function closeTerminal(){ overlay.classList.remove('active'); }
+closeBtn.addEventListener('click', closeTerminal);
+overlay.addEventListener('click', e => { if(e.target === overlay) closeTerminal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeTerminal(); });
+</script>
+
+</body>
+</html>
